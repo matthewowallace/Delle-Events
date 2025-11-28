@@ -37,7 +37,10 @@ const bookingSchema = new Schema<BookingDocument, BookingModel>(
 bookingSchema.index({ eventId: 1 });
 
 /**
- * Simple, conservative email validation pattern.
+ * Checks whether a string is a well-formed email address using a conservative pattern.
+ *
+ * @param email - The email address to validate
+ * @returns `true` if the input matches the conservative email pattern, `false` otherwise.
  */
 function isValidEmail(email: string): boolean {
   // Intentionally conservative regex to avoid over-accepting invalid emails.
