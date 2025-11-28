@@ -51,7 +51,10 @@ const eventSchema = new Schema<EventDocument, EventModel>(
 eventSchema.index({ slug: 1 }, { unique: true });
 
 /**
- * Convert a string into a URL-safe slug.
+ * Creates a URL-safe slug from a string.
+ *
+ * @param value - The input string to convert
+ * @returns The input converted to a lowercase, hyphen-separated slug containing only ASCII letters, digits, and hyphens
  */
 function toSlug(value: string): string {
   return value
@@ -63,8 +66,11 @@ function toSlug(value: string): string {
 }
 
 /**
- * Normalize a date string into YYYY-MM-DD (ISO date-only) format.
- * Throws if the input cannot be parsed as a valid date.
+ * Normalize a date string to ISO date-only format (YYYY-MM-DD).
+ *
+ * @param value - The input date string to normalize
+ * @returns The normalized date in `YYYY-MM-DD` format
+ * @throws Error if `value` cannot be parsed as a valid date
  */
 function normalizeDate(value: string): string {
   const date = new Date(value);
@@ -75,8 +81,11 @@ function normalizeDate(value: string): string {
 }
 
 /**
- * Normalize time into a 24h HH:MM format.
- * Accepts values like "9:00", "09:00", "21:30".
+ * Normalize a time string to 24-hour HH:MM format.
+ *
+ * @param value - The input time string (e.g., "9:00", "09:00", "21:30")
+ * @returns The time formatted as `HH:MM` in 24-hour notation
+ * @throws Error if the input does not match `HH:MM` or if hours are not 0–23 or minutes are not 0–59
  */
 function normalizeTime(value: string): string {
   const trimmed = value.trim();
@@ -99,8 +108,10 @@ function normalizeTime(value: string): string {
 }
 
 /**
- * Validate that all required string and array fields are present and non-empty.
- * This is in addition to Mongoose's required validators for clearer error messages.
+ * Ensure all required string and array fields on an EventDocument are present and non-empty.
+ *
+ * @param doc - The Event document to validate
+ * @throws Error if any required string field is empty after trimming, if `agenda` is not a non-empty array, or if `tags` is not a non-empty array
  */
 function validateRequiredFields(doc: EventDocument): void {
   const stringFields: Array<keyof EventDocument> = [
