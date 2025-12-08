@@ -139,47 +139,46 @@ function validateRequiredFields(doc: EventDocument): void {
  * - Normalize date and time formats.
  * - Generate or update the slug when the title changes.
  */
-// eventSchema.pre('save', function preSave(next) {
-//     try {
-//         // Run manual validation for clearer domain-specific errors.
-//         validateRequiredFields(this);
+ eventSchema.pre('save', function preSave(next) {
+     try {
+         // Run manual validation for clearer domain-specific errors.
+         validateRequiredFields(this);
+        // Normalize date and time into consistent formats.
+         this.date = normalizeDate(this.date);
+         this.time = normalizeTime(this.time);
+
+         // Only regenerate slug if the title has changed or slug is missing.
+         if (this.isModified('title') || !this.slug) {
+             this.slug = toSlug(this.title);
+         }
+
+         next();
+     } catch (error) {
+         next(error as Error);
+     }
+ });
+
+// // Pre-save hook for slug generation and data normalization
+// eventSchema.pre('save', function (next) {
+//     const event = this as EventDocument;
 //
-//         // Normalize date and time into consistent formats.
-//         this.date = normalizeDate(this.date);
-//         this.time = normalizeTime(this.time);
-//
-//         // Only regenerate slug if the title has changed or slug is missing.
-//         if (this.isModified('title') || !this.slug) {
-//             this.slug = toSlug(this.title);
-//         }
-//
-//         next();
-//     } catch (error) {
-//         next(error as Error);
+//     // Generate slug only if title changed or document is new
+//     if (event.isModified('title') || event.isNew) {
+//         event.slug = toSlug(event.title);
 //     }
+//
+//     // Normalize date to ISO format if it's not already
+//     if (event.isModified('date')) {
+//         event.date = normalizeDate(event.date);
+//     }
+//
+//     // Normalize time format (HH:MM)
+//     if (event.isModified('time')) {
+//         event.time = normalizeTime(event.time);
+//     }
+//
+//     next();
 // });
-
-// Pre-save hook for slug generation and data normalization
-eventSchema.pre('save', function (next) {
-    const event = this as EventDocument;
-
-    // Generate slug only if title changed or document is new
-    if (event.isModified('title') || event.isNew) {
-        event.slug = toSlug(event.title);
-    }
-
-    // Normalize date to ISO format if it's not already
-    if (event.isModified('date')) {
-        event.date = normalizeDate(event.date);
-    }
-
-    // Normalize time format (HH:MM)
-    if (event.isModified('time')) {
-        event.time = normalizeTime(event.time);
-    }
-
-    next();
-});
 
 export const Event: EventModel =
     (models.Event as EventModel) || model<EventDocument, EventModel>('Event', eventSchema);
