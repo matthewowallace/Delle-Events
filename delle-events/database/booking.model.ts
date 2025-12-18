@@ -65,9 +65,9 @@ bookingSchema.pre('save', async function preSave(next) {
             }
         }
 
-        next();
+        // next();
     } catch (error) {
-        next(error as Error);
+        // next(error as Error);
     }
 });
 

@@ -35,8 +35,8 @@ const EventDetailsPage = async({params} : {params: Promise< {slug: string }>}) =
 
     const {slug} = await params;
     const request = await fetch(`${Base_URL}/api/events/${slug}`);
-    const event = await request.json();
-    const {event: description, image, overview, date, time, location, mode, agenda, audience,tags} = event;
+    const data = await request.json();
+    const {description, image, overview, date, time, location, mode, agenda, audience,tags} = data.event;
 
     if(!description) throw new Error("Event not found");
 
